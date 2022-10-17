@@ -1,4 +1,4 @@
-package kakao;
+package Regex;
 
 public class Kakao2021_IDRecommendation {
     static class Solution {
