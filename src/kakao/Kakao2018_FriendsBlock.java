@@ -25,7 +25,7 @@ public class Kakao2018_FriendsBlock {
     private static char[][] matrix = null;
     private static int LIMIT_M = 0;
     private static int LIMIT_N = 0;
-    private static final char DELETED_CHAR = 'X';
+    private static final char DELETED_CHAR = ' ';
 
     public static void main(String[] args) {
         String[] board = {
