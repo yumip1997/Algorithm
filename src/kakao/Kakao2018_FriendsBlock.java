@@ -3,7 +3,6 @@ package kakao;
 import java.util.*;
 
 public class Kakao2018_FriendsBlock {
-    
     static class Point{
         private int m;
         private int n;
@@ -16,7 +15,7 @@ public class Kakao2018_FriendsBlock {
         public int getM() {
             return m;
         }
-        
+
         public int getN() {
             return n;
         }
@@ -27,14 +26,7 @@ public class Kakao2018_FriendsBlock {
     private static int LIMIT_N = 0;
     private static final char DELETED_CHAR = ' ';
 
-    public static void main(String[] args) {
-        String[] board = {
-                "AAAAA","AUUUA","AUUAA","AAAAA"
-        };
-
-        int m = board.length;
-        int n = board[0].length();
-
+    public int solution(int m, int n, String[] board) {
         initMatrixInfo(m, n, board);
         LIMIT_M = m;
         LIMIT_N = n;
@@ -48,26 +40,12 @@ public class Kakao2018_FriendsBlock {
             changLocation();
         }
 
-        int cnt = getDeletedCnt();
-        System.out.println(getDeletedCnt());
+        return getDeletedCnt();
     }
 
-    private static int getDeletedCnt() {
-        int cnt = 0;
-        for(int i=0;i<LIMIT_M;i++){
-            for(int j=0;j<LIMIT_N;j++){
-                if(matrix[i][j] != DELETED_CHAR){
-                    continue;
-                }
-                cnt++;
-            }
-        }
-        return cnt;
-    }
-
-    private static void initMatrixInfo(int m, int n, String[] board) {
+    private void initMatrixInfo(int m, int n, String[] board) {
         matrix = new char[m][n];
-        
+
         for(int i = 0; i< m; i++){
             String str = board[i];
             for(int j = 0; j< n; j++){
@@ -84,56 +62,18 @@ public class Kakao2018_FriendsBlock {
                 if(matrix[i][j] == DELETED_CHAR){
                     continue;
                 }
-                //현재위치
-                int currentM = i;
-                int currentN = j;
 
-                //현재위치 -> 오른쪽
-                int rightM = i;
-                int rightN = j+1;
-                if(rightN == LIMIT_N) continue;
-                while (matrix[rightM][rightN] == DELETED_CHAR){
-                    rightN++;
-
-                    if(rightN == LIMIT_N){
-                        break;
-                    }
+                if(i+1 == LIMIT_M || j+1 == LIMIT_N){
+                    continue;
                 }
-                if(rightN == LIMIT_N) continue;
 
-                //현재위치 -> 오른쪽 -> 아래
-                int rightDownM = i+1;
-                int rightDownN = j+1;
-                if(rightDownM == LIMIT_M) continue;
-                while (matrix[rightDownM][rightDownN] == DELETED_CHAR){
-                    rightDownM++;
-
-                    if(rightDownM == LIMIT_M){
-                        break;
-                    }
-                }
-                if(rightDownM == LIMIT_M) continue;
-
-                //현재위채 -> 오른쪽 -> 아래 -> 왼쪽
-                int rightDownLeftM = i+1;
-                int rightDownLeftN = j;
-                if(rightDownLeftM == LIMIT_M) continue;
-                while (matrix[rightDownLeftM][rightDownLeftN] == DELETED_CHAR){
-                    rightDownLeftM++;
-
-                    if(rightDownLeftM == LIMIT_M){
-                        break;
-                    }
-                }
-                if(rightDownLeftM == LIMIT_M) continue;
-
-                char c = matrix[currentM][currentN];
-                if(c == matrix[rightM][rightN] && c == matrix[rightDownM][rightDownN]
-                        && c == matrix[rightDownLeftM][rightDownLeftN]){
-                    points.add(new Point(currentM, currentN));
-                    points.add(new Point(rightM, rightN));
-                    points.add(new Point(rightDownM, rightDownN));
-                    points.add(new Point(rightDownLeftM, rightDownLeftN));
+                char c = matrix[i][j];
+                if(c == matrix[i][j+1] && c == matrix[i+1][j+1]
+                        && c == matrix[i+1][j]){
+                    points.add(new Point(i, j));
+                    points.add(new Point(i, j+1));
+                    points.add(new Point(i+1, j+1));
+                    points.add(new Point(i+1, j));
                 }
             }
         }
@@ -141,7 +81,7 @@ public class Kakao2018_FriendsBlock {
         return points;
     }
 
-    private static void setDeletedChar(List<Point> points){
+    private void setDeletedChar(List<Point> points){
         for (Point point : points) {
             int m = point.getM();
             int n = point.getN();
@@ -149,9 +89,9 @@ public class Kakao2018_FriendsBlock {
         }
     }
 
-    private static void changLocation() {
-        for(int i=LIMIT_M-1;i>0;i--){
-            for(int j=LIMIT_N-1;j>0;j--){
+    private void changLocation() {
+        for(int i=LIMIT_M-1;i>=0;i--){
+            for(int j=LIMIT_N-1;j>=0;j--){
                 if(matrix[i][j] == DELETED_CHAR){
                     continue;
                 }
@@ -171,5 +111,28 @@ public class Kakao2018_FriendsBlock {
                 }
             }
         }
+    }
+
+    private int getDeletedCnt() {
+        int cnt = 0;
+        for(int i=0;i<LIMIT_M;i++){
+            for(int j=0;j<LIMIT_N;j++){
+                if(matrix[i][j] != DELETED_CHAR){
+                    continue;
+                }
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+
+    public static void main(String[] args) {
+        String[] board = {
+                "TTTANT", "RRFACC", "RRRFCC", "TRRRAA", "TTMMMF", "TMMTTJ"
+        };
+
+        Kakao2018_FriendsBlock solution = new Kakao2018_FriendsBlock();
+        int solution1 = solution.solution(board.length, board[0].length(), board);
+        System.out.println(solution1);
     }
 }
