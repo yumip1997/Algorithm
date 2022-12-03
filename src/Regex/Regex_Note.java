@@ -11,5 +11,6 @@ public class Regex_Note {
 
         //문자열 - 같은 문자 반복 여부 확인
         String isRepeated = ".*([a-z])\\1+.*";
+
     }
 }
