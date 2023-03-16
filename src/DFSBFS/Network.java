@@ -48,6 +48,7 @@ public class Network {
     private static int dfsByStack(int[][] computers) {
         Stack<Integer> stack = new Stack<>();
         boolean[] visited = new boolean[computers.length];
+
         int groupCnt = 0;
         for(int i = 0; i< computers.length; i++){
             if(visited[i]){
