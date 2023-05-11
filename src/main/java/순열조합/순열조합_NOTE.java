@@ -5,77 +5,76 @@ import java.util.stream.Collectors;
 
 public class 순열조합_NOTE {
 
+    public static final List<List<Integer>> permList = new ArrayList<>();
     public static final List<List<Integer>> combList = new ArrayList<>();
-    public static final List<List<Integer>> perList = new ArrayList<>();
+    public static final List<List<Integer>> duplicateCombList = new ArrayList<>();
 
-    public static void makeCombination(int[] arr, boolean[] visited, int depth, int n, int r){
-        if(r == 0){
+    private static void makePerm(int[] arr, int[] temp, int r, int current, boolean[] visited){
+        if(r == current){
             List<Integer> tempCombList = new ArrayList<>();
-            for(int i=0;i<visited.length;i++){
-                if(visited[i]){
-                    tempCombList.add(arr[i]);
-                }
+            for(int i=0;i<r;i++){
+                tempCombList.add(temp[i]);
+            }
+            permList.add(tempCombList);
+            return;
+        }
+
+        for(int i=0;i<arr.length;i++){
+            if(!visited[i]){
+                visited[i] = true;
+                temp[current] = arr[i];
+                makePerm(arr, temp, r, current+1, visited);
+                visited[i] = false;
+            }
+        }
+    }
+
+    private static void makeCombination(int[] arr, int[] temp, int r, int current, int start){
+        if(r == current){
+            List<Integer> tempCombList = new ArrayList<>();
+            for(int i=0;i<r;i++){
+                tempCombList.add(temp[i]);
             }
             combList.add(tempCombList);
             return;
         }
 
-        for(int i=depth;i<n;i++){
-            if(!visited[i]){
-                visited[i] = true;
-                makeCombination(arr, visited, i+1, n, r-1);
-                visited[i] = false;
-            }
+        for(int i=start;i<arr.length;i++){
+            temp[current] = arr[i];
+            makeCombination(arr, temp, r, current+1, i+1);
         }
     }
 
-    public static Map<Integer, List<List<Integer>>> makeCombNumCombListMap(){
-        return combList.stream()
-                .collect(Collectors.groupingBy(List::size));
-    }
-
-    public static void makePermutation(int[] arr, int[] output, boolean[] visited, int depth, int n, int r){
-        if(depth == r){
-            List<Integer> tempPerList = new ArrayList<>();
-            for(int i=0;i<depth;i++){
-               tempPerList.add(output[i]);
+    private static void makeDupCombination(int[] arr, int[] temp, int r, int current, int start){
+        if(r == current){
+            List<Integer> tempCombList = new ArrayList<>();
+            for(int i=0;i<r;i++){
+                tempCombList.add(temp[i]);
             }
-            perList.add(tempPerList);
+            duplicateCombList.add(tempCombList);
             return;
         }
 
-        for(int i=0;i<n;i++){
-            if(visited[i] !=true){
-                visited[i] = true;
-                output[depth] = arr[i];
-                makePermutation(arr, output, visited, depth+1, n, r);
-                visited[i] = false;
-            }
+        for(int i=start;i<arr.length;i++){
+            temp[current] = arr[i];
+            makeCombination(arr, temp, r, current+1, i);
         }
-    }
-
-    public static Map<Integer, List<List<Integer>>> makePerNumPerListMap(){
-        return perList.stream()
-                .collect(Collectors.groupingBy(List::size));
     }
 
 
     public static void main(String[] args) {
-        int[] arr = {1,2,3,4};
+        int[] arr = {1,2,3,4,5};
+        Set<Integer> set = new TreeSet<>();
+        int[] ints = set.stream().mapToInt(e -> e).toArray();
 
-        for(int i=1;i<=arr.length;i++){
-            boolean[] visited = new boolean[arr.length];
-            makeCombination(arr, visited, 0, arr.length, i);
+        for (Integer integer : set) {
+
+        }
+        makePerm(arr, new int[arr.length], 2, 0, new boolean[arr.length]);
+        for (List<Integer> integers : permList) {
+            System.out.println(integers.toString());
         }
 
-        for(int i=1;i<=arr.length;i++){
-            boolean[] visited = new boolean[arr.length];
-            int[] output = new int[i];
-            makePermutation(arr, output, visited, 0, arr.length, i);
-        }
 
-        Map<Integer, List<List<Integer>>> combNumCombListMap = makeCombNumCombListMap();
-        Map<Integer, List<List<Integer>>> perNumPerListMap = makePerNumPerListMap();
-        System.out.println("확인");
     }
 }
