@@ -5,58 +5,100 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WordChange {
+import java.util.*;
+import java.util.stream.Collectors;
 
-    private static boolean isChangeable(String currentStr, String changeStr){
-       int diffCnt = 0;
-       for(int i=0;i<currentStr.length();i++){
-           if(currentStr.charAt(i) != changeStr.charAt(i)){
-               diffCnt++;
-           }
+class WordChange {
 
-           if(diffCnt > 1){
-               return false;
-           }
-       }
-       return true;
-    }
-    public static void main(String[] args) {
+    public int solution(String begin, String target, String[] words) {
+        int answer = 0;
+        Map<String, List<String>> adjacentWordsMap = new HashMap<>();
+        List<String> beginAdjacentList = new ArrayList<>();
+        Map<String, Boolean> wordVisitedCheckMap = new HashMap<>();
+        
+        wordVisitedCheckMap.put(begin, false);
+        adjacentWordsMap.put(begin, beginAdjacentList);
 
-        String[] words = {"hot", "dot", "dog", "lot", "log", "cog"};
-        String begin = "hit";
-        String target = "cog";
-
-        Map<String, List<String>> stringListMap = initChangeableMap(begin, words);
-        System.out.println(stringListMap.toString());
-
-    }
-
-    private static Map<String, List<String>> initChangeableMap(String target, String[] words) {
-        Map<String, List<String>> changeableMap = new HashMap<>();
-
-        changeableMap.put(target, new ArrayList<>());
-        for (String word : words) {
-            List<String> changeableStrList = changeableMap.get(target);
-            if(isChangeable(target, word)){
-                changeableStrList.add(word);
+        for(int i=0;i<words.length;i++){
+            if(isChangeable(begin, words[i])){
+                beginAdjacentList.add(words[i]);
             }
         }
 
-        for(int i = 0; i< words.length; i++){
-            String currentStr = words[i];
-            changeableMap.put(currentStr, new ArrayList<>());
-            List<String> changeableStrList = changeableMap.get(currentStr);
+        for(int i=0;i<words.length;i++){
+            String key = words[i];
+            wordVisitedCheckMap.put(key, false);
+            adjacentWordsMap.put(key, new ArrayList<String>());
 
-            for(int j = 0; j< words.length; j++){
+            for(int j=0;j<words.length;j++){
                 if(i == j){
                     continue;
                 }
 
-                if(isChangeable(currentStr, words[j])){
-                    changeableStrList.add(words[j]);
+                if(isChangeable(key, words[j])){
+                    List<String> adjacentList = adjacentWordsMap.get(key);
+                    adjacentList.add(words[j]);
                 }
+
             }
         }
-        return changeableMap;
+
+        for(String key : adjacentWordsMap.keySet()){
+            System.out.println(key + " : " + adjacentWordsMap.get(key).toString());
+        }
+
+        Map<String, Integer> wordTrackCntMap = new HashMap<>();
+
+
+        Queue<String> queue = new LinkedList<>();
+        wordVisitedCheckMap.put(begin, true);
+        queue.add(begin);
+        wordTrackCntMap.put(begin, 0);
+
+
+        int result = 0;
+        while(!queue.isEmpty()){
+            String startWord = queue.poll();
+            if(startWord.equals(target)){
+                result = wordTrackCntMap.get(startWord);
+                break;
+            }
+            List<String> adjacentList = adjacentWordsMap.get(startWord);
+            int trackCnt = wordTrackCntMap.get(startWord);
+
+            for(int i=0;i<adjacentList.size();i++){
+                String word = adjacentList.get(i);
+
+                if(!wordVisitedCheckMap.get(word)){
+                    queue.add(word);
+                    wordVisitedCheckMap.put(word, true);
+                    wordTrackCntMap.put(word, trackCnt+1);
+                }
+            }
+
+        }
+
+        return result;
+    }
+
+    private boolean isChangeable(String str1, String str2){
+        int diff = 0;
+        for(int i=0;i<str1.length();i++){
+            if(str1.charAt(i) != str2.charAt(i)){
+                diff++;
+            }
+
+            if(diff > 1){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) {
+        WordChange wordChange = new WordChange();
+        int solution = wordChange.solution("hit", "cog", new String[]{"hot", "dot", "dog", "lot", "log", "cog"});
+        System.out.println(solution);
     }
 }

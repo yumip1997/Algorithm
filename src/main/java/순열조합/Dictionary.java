@@ -3,39 +3,34 @@ package 순열조합;
 import java.util.*;
 
 public class Dictionary {
-    private static final List<String> WORD_LIST = new ArrayList<>();
+    private final List<String> wordList = new ArrayList<>();
 
-    public int solution(String word) {
-        int answer = 0;
-        char[] arr = {'A', 'E', 'I', 'O', 'U'};
-        int n = arr.length;
-        for (int i=1;i<=n;i++) {
-            char[] output = new char[i];
-            boolean[] visited = new boolean[n];
-            makePermutation(arr, output, visited, 0, n, i);
-        }
-        WORD_LIST.sort(Comparator.naturalOrder());
-
-        return WORD_LIST.indexOf(word)+1;
-    }
-
-    private void makePermutation(char[] arr, char[] output, boolean[] visited, int depth, int n, int r){
-        if(depth == r){
-            WORD_LIST.add(String.valueOf(output));
+    private void makeDuplicatePerm(char[] arr, char[] temp, int r, int current){
+        if(r == current){
+            StringBuilder builder = new StringBuilder();
+            for(int i=0;i<r;i++){
+                builder.append(temp[i]);
+            }
+            wordList.add(builder.toString());
             return;
         }
 
-        for(int i=0;i<n;i++){
-            visited[i] = true;
-            output[depth] = arr[i];
-            makePermutation(arr, output, visited, depth+1, n, r);
-            visited[i] = false;
+        for(int i=0;i<arr.length;i++){
+            temp[current] = arr[i];
+            makeDuplicatePerm(arr, temp, r, current+1);
         }
+
+
+    }
+    public int solution(String word) {
+        char[] charArr = {'A', 'E', 'I', 'O', 'U'};
+        makeDuplicatePerm(charArr, new char[charArr.length], 1, 0);
+        wordList.sort(Comparator.naturalOrder());
+        return wordList.indexOf(word)+1;
     }
 
     public static void main(String[] args) {
         Dictionary dictionary = new Dictionary();
-        int i = dictionary.solution("I");
-        System.out.println(i);
+        dictionary.solution("A");
     }
 }

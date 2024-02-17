@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 public class 순열조합_NOTE {
 
     public static final List<List<Integer>> permList = new ArrayList<>();
+    public static final List<List<Integer>> duplicatPermList = new ArrayList<>();
     public static final List<List<Integer>> combList = new ArrayList<>();
     public static final List<List<Integer>> duplicateCombList = new ArrayList<>();
 
@@ -26,6 +27,22 @@ public class 순열조합_NOTE {
                 makePerm(arr, temp, r, current+1, visited);
                 visited[i] = false;
             }
+        }
+    }
+
+    private static void makeDuplicatePerm(int[] arr, int[] temp, int r, int current){
+        if(r == current){
+            List<Integer> tempCombList = new ArrayList<>();
+            for(int i=0;i<r;i++){
+                tempCombList.add(temp[i]);
+            }
+            duplicatPermList.add(tempCombList);
+            return;
+        }
+
+        for(int i=0;i<arr.length;i++){
+            temp[current] = arr[i];
+            makeDuplicatePerm(arr, temp, r, current+1);
         }
     }
 
@@ -64,17 +81,10 @@ public class 순열조합_NOTE {
 
     public static void main(String[] args) {
         int[] arr = {1,2,3,4,5};
-        Set<Integer> set = new TreeSet<>();
-        int[] ints = set.stream().mapToInt(e -> e).toArray();
-
-        for (Integer integer : set) {
-
-        }
         makePerm(arr, new int[arr.length], 2, 0, new boolean[arr.length]);
+
         for (List<Integer> integers : permList) {
             System.out.println(integers.toString());
         }
-
-
     }
 }
